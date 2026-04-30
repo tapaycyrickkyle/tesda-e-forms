@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AuthNotificationModal } from "./auth-notification-modal";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   faEnvelope,
@@ -14,7 +15,7 @@ import {
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [notification, setNotification] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -25,7 +26,7 @@ export default function LoginForm() {
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
 
-    setErrorMessage("");
+    setNotification("");
     setIsSubmitting(true);
 
     try {
@@ -36,14 +37,14 @@ export default function LoginForm() {
       });
 
       if (error) {
-        setErrorMessage(error.message);
+        setNotification(error.message);
         return;
       }
 
       router.refresh();
       router.push("/applicant");
     } catch (error) {
-      setErrorMessage(
+      setNotification(
         error instanceof Error
           ? error.message
           : "Unable to login. Please try again."
@@ -54,19 +55,23 @@ export default function LoginForm() {
   }
 
   function clearError() {
-    if (errorMessage) {
-      setErrorMessage("");
+    if (notification) {
+      setNotification("");
     }
   }
 
   return (
-    <form className="space-y-6" method="post" onSubmit={handleSubmit}>
-      {errorMessage ? (
-        <p className="rounded-lg border border-error/30 bg-red-50 px-4 py-3 text-sm font-medium text-error">
-          {errorMessage}
-        </p>
+    <>
+      {notification ? (
+        <AuthNotificationModal
+          message={notification}
+          onClose={() => setNotification("")}
+          title="Login Failed"
+          type="error"
+        />
       ) : null}
 
+      <form className="space-y-6" method="post" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold text-on-surface" htmlFor="email">
           Email Address
@@ -129,6 +134,7 @@ export default function LoginForm() {
       >
         {isSubmitting ? "Logging in..." : "Login"}
       </button>
-    </form>
+      </form>
+    </>
   );
 }

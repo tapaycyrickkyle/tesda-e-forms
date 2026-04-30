@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AuthNotificationModal } from "./auth-notification-modal";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   faEnvelope,
@@ -16,15 +17,19 @@ import {
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [notification, setNotification] = useState<{
+    message: string;
+    title: string;
+    type: "error" | "success";
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const firstName = String(formData.get("firstName") ?? "").trim();
     const middleName = String(formData.get("middleName") ?? "").trim();
     const surname = String(formData.get("surname") ?? "").trim();
@@ -32,11 +37,14 @@ export default function SignUpForm() {
     const password = String(formData.get("password") ?? "");
     const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
-    setErrorMessage("");
-    setSuccessMessage("");
+    setNotification(null);
 
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+      setNotification({
+        message: "Passwords do not match.",
+        title: "Sign Up Failed",
+        type: "error",
+      });
       return;
     }
 
@@ -55,12 +63,18 @@ export default function SignUpForm() {
             full_name: [firstName, middleName, surname].filter(Boolean).join(" "),
           },
           emailRedirectTo:
-            typeof window === "undefined" ? undefined : `${window.location.origin}/`,
+            typeof window === "undefined"
+              ? undefined
+              : `${window.location.origin}/auth/confirmed`,
         },
       });
 
       if (error) {
-        setErrorMessage(error.message);
+        setNotification({
+          message: error.message,
+          title: "Sign Up Failed",
+          type: "error",
+        });
         return;
       }
 
@@ -70,43 +84,44 @@ export default function SignUpForm() {
         return;
       }
 
-      event.currentTarget.reset();
-      setSuccessMessage("Account created. Please check your email to confirm your account.");
+      form.reset();
+      setNotification({
+        message: "Account created. Please check your email to confirm your account.",
+        title: "Confirmation Email Sent",
+        type: "success",
+      });
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Unable to create account. Please try again."
-      );
+      setNotification({
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to create account. Please try again.",
+        title: "Sign Up Failed",
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
   }
 
   function clearMessages() {
-    if (errorMessage) {
-      setErrorMessage("");
-    }
-
-    if (successMessage) {
-      setSuccessMessage("");
+    if (notification) {
+      setNotification(null);
     }
   }
 
   return (
-    <form className="space-y-5" method="post" onSubmit={handleSubmit}>
-      {errorMessage ? (
-        <p className="rounded-lg border border-error/30 bg-red-50 px-4 py-3 text-sm font-medium text-error">
-          {errorMessage}
-        </p>
+    <>
+      {notification ? (
+        <AuthNotificationModal
+          message={notification.message}
+          onClose={() => setNotification(null)}
+          title={notification.title}
+          type={notification.type}
+        />
       ) : null}
 
-      {successMessage ? (
-        <p className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
-          {successMessage}
-        </p>
-      ) : null}
-
+      <form className="space-y-5" method="post" onSubmit={handleSubmit}>
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-on-surface" htmlFor="firstName">
@@ -251,6 +266,7 @@ export default function SignUpForm() {
       >
         {isSubmitting ? "Creating account..." : "Create Account"}
       </button>
-    </form>
+      </form>
+    </>
   );
 }
