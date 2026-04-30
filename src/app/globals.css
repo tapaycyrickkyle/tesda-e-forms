@@ -105,33 +105,4 @@
     background: var(--background);
     color: var(--foreground);
   }
-
-  .app-container {
-    width: min(100% - 2rem, 72rem);
-    margin-inline: auto;
-  }
-
-  .app-section {
-    padding-block: 3rem;
-  }
-
-  .app-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .app-container {
-      width: min(100% - 3rem, 72rem);
-    }
-
-    .app-section {
-      padding-block: 4rem;
-    }
-
-    .app-grid {
-      gap: 1.5rem;
-    }
-  }
 }

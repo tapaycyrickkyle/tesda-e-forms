@@ -1,29 +1,35 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingColumns } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import LoginForm from "./login-form";
+import SignUpForm from "../sign-up-form";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Sign Up | TESDA E-Forms Portal",
+  description: "Create a TESDA E-Forms Portal applicant account.",
+};
+
+export default function SignUpPage() {
   return (
-    <main className="app-shell relative flex items-center justify-center overflow-hidden px-4 pb-4 pt-12 sm:px-6 sm:pb-6 sm:pt-16">
+    <main className="app-shell relative flex items-center justify-center overflow-hidden px-4 pb-4 pt-8 sm:px-6 sm:pb-6 sm:pt-10">
       <section className="z-10 flex w-full max-w-md flex-col items-center">
         <div className="mb-6 text-center">
           <h1 className="mb-1 text-3xl font-bold leading-tight text-primary">
-            TESDA E-Forms
+            Create Account
           </h1>
           <p className="mx-auto max-w-xs text-sm leading-6 text-secondary">
-            Application Form System for TESDA Eastern Samar Provincial Office
+            Sign up for the TESDA E-Forms Portal to start your application.
           </p>
         </div>
 
         <div className="w-full rounded-xl border border-outline-variant bg-surface-container-lowest p-8 shadow-xl">
-          <LoginForm />
+          <SignUpForm />
 
           <div className="mt-8 border-t border-outline-variant pt-6 text-center">
             <p className="text-sm text-secondary">
-              Don&apos;t have an account yet?
-              <Link className="ml-1 font-bold text-primary hover:underline" href="/sign-up">
-                Create Account
+              Already have an account?
+              <Link className="ml-1 font-bold text-primary hover:underline" href="/">
+                Login
               </Link>
             </p>
           </div>
@@ -33,22 +39,6 @@ export default function Home() {
           <p className="text-sm text-on-surface-variant">
             &copy; 2024 TESDA E-Forms Portal. All rights reserved.
           </p>
-          <nav
-            aria-label="Institutional links"
-            className="flex justify-center gap-4 text-xs font-medium text-secondary"
-          >
-            <a className="transition-colors hover:text-primary" href="#">
-              Privacy Policy
-            </a>
-            <span aria-hidden="true" className="mt-1.5 h-1 w-1 rounded-full bg-outline-variant" />
-            <a className="transition-colors hover:text-primary" href="#">
-              Terms of Service
-            </a>
-            <span aria-hidden="true" className="mt-1.5 h-1 w-1 rounded-full bg-outline-variant" />
-            <a className="transition-colors hover:text-primary" href="#">
-              Support
-            </a>
-          </nav>
         </footer>
       </section>
 
