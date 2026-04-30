@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   faEnvelope,
   faEye,
@@ -15,15 +16,97 @@ import {
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/");
+
+    const formData = new FormData(event.currentTarget);
+    const firstName = String(formData.get("firstName") ?? "").trim();
+    const middleName = String(formData.get("middleName") ?? "").trim();
+    const surname = String(formData.get("surname") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+    const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            middle_name: middleName,
+            surname,
+            full_name: [firstName, middleName, surname].filter(Boolean).join(" "),
+          },
+          emailRedirectTo:
+            typeof window === "undefined" ? undefined : `${window.location.origin}/`,
+        },
+      });
+
+      if (error) {
+        setErrorMessage(error.message);
+        return;
+      }
+
+      if (data.session) {
+        router.refresh();
+        router.push("/applicant");
+        return;
+      }
+
+      event.currentTarget.reset();
+      setSuccessMessage("Account created. Please check your email to confirm your account.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to create account. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function clearMessages() {
+    if (errorMessage) {
+      setErrorMessage("");
+    }
+
+    if (successMessage) {
+      setSuccessMessage("");
+    }
   }
 
   return (
     <form className="space-y-5" method="post" onSubmit={handleSubmit}>
+      {errorMessage ? (
+        <p className="rounded-lg border border-error/30 bg-red-50 px-4 py-3 text-sm font-medium text-error">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {successMessage ? (
+        <p className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+          {successMessage}
+        </p>
+      ) : null}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-on-surface" htmlFor="firstName">
@@ -37,6 +120,7 @@ export default function SignUpForm() {
               className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-4 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
               id="firstName"
               name="firstName"
+              onChange={clearMessages}
               placeholder="Enter first name"
               required
               type="text"
@@ -56,6 +140,7 @@ export default function SignUpForm() {
               className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-4 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
               id="middleName"
               name="middleName"
+              onChange={clearMessages}
               placeholder="Optional"
               type="text"
             />
@@ -75,6 +160,7 @@ export default function SignUpForm() {
             className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-4 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="surname"
             name="surname"
+            onChange={clearMessages}
             placeholder="Enter surname"
             required
             type="text"
@@ -94,6 +180,7 @@ export default function SignUpForm() {
             className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-4 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="email"
             name="email"
+            onChange={clearMessages}
             placeholder="name@example.com"
             required
             type="email"
@@ -113,6 +200,7 @@ export default function SignUpForm() {
             className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-11 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="password"
             name="password"
+            onChange={clearMessages}
             placeholder="Create a password"
             required
             type={showPassword ? "text" : "password"}
@@ -140,6 +228,7 @@ export default function SignUpForm() {
             className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-11 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="confirmPassword"
             name="confirmPassword"
+            onChange={clearMessages}
             placeholder="Confirm your password"
             required
             type={showConfirmPassword ? "text" : "password"}
@@ -156,10 +245,11 @@ export default function SignUpForm() {
       </div>
 
       <button
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-4 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-4 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+        disabled={isSubmitting}
         type="submit"
       >
-        Create Account
+        {isSubmitting ? "Creating account..." : "Create Account"}
       </button>
     </form>
   );

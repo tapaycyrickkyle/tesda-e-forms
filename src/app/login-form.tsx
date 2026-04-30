@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   faEnvelope,
   faEye,
@@ -13,15 +14,59 @@ import {
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/applicant");
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setErrorMessage(error.message);
+        return;
+      }
+
+      router.refresh();
+      router.push("/applicant");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to login. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function clearError() {
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   }
 
   return (
     <form className="space-y-6" method="post" onSubmit={handleSubmit}>
+      {errorMessage ? (
+        <p className="rounded-lg border border-error/30 bg-red-50 px-4 py-3 text-sm font-medium text-error">
+          {errorMessage}
+        </p>
+      ) : null}
+
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold text-on-surface" htmlFor="email">
           Email Address
@@ -31,9 +76,11 @@ export default function LoginForm() {
             <FontAwesomeIcon aria-hidden="true" icon={faEnvelope} />
           </span>
           <input
+            autoComplete="email"
             className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-4 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="email"
             name="email"
+            onChange={clearError}
             placeholder="Enter your email"
             required
             type="email"
@@ -55,9 +102,11 @@ export default function LoginForm() {
             <FontAwesomeIcon aria-hidden="true" icon={faLock} />
           </span>
           <input
+            autoComplete="current-password"
             className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-11 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="password"
             name="password"
+            onChange={clearError}
             placeholder="Enter your password"
             required
             type={showPassword ? "text" : "password"}
@@ -74,10 +123,11 @@ export default function LoginForm() {
       </div>
 
       <button
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-4 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-4 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+        disabled={isSubmitting}
         type="submit"
       >
-        Login
+        {isSubmitting ? "Logging in..." : "Login"}
       </button>
     </form>
   );

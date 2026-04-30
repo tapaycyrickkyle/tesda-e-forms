@@ -43,6 +43,21 @@ You are a senior software engineer working on this project.
 - Ensure text, buttons, forms, cards, and navigation remain usable and readable on small screens.
 - Run `npm run build` after UI changes when practical.
 
+# Security Standards
+
+- Treat security as a default requirement for every feature.
+- Never commit secrets, API keys, tokens, passwords, private keys, `.env*` files, or credentials.
+- Use environment variables for configuration and secrets.
+- Prefer official authentication and authorization mechanisms over custom security logic.
+- Validate and sanitize user input at trust boundaries.
+- Do not expose server-only secrets to client components or `NEXT_PUBLIC_*` variables.
+- Follow least-privilege access for database policies, API keys, and service roles.
+- Use Supabase Row Level Security policies for user-owned data.
+- Avoid logging sensitive user data, tokens, passwords, or personal information.
+- Preserve secure defaults unless the user explicitly asks and the risk is explained.
+- When adding dependencies, prefer maintained packages and check for known security issues when practical.
+- When implementing auth, access control, file uploads, payments, or personal data handling, review for common risks before finishing.
+
 # Communication
 
 - State assumptions when requirements are ambiguous.
