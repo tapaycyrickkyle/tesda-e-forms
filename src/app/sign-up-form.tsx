@@ -122,7 +122,7 @@ export default function SignUpForm() {
       ) : null}
 
       <form className="space-y-5" method="post" onSubmit={handleSubmit}>
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="space-y-5">
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-on-surface" htmlFor="firstName">
             First Name

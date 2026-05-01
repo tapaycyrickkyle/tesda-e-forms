@@ -1,6 +1,7 @@
 "use client";
 
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { useState } from "react";
 import {
   faClipboardCheck,
   faFileLines,
@@ -10,7 +11,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const navItems = [
   { label: "Dashboard", icon: faHouse, href: "/applicant" },
@@ -19,8 +21,7 @@ const navItems = [
 ];
 
 const accountItems = [
-  { label: "Profile", icon: faUser, href: "#" },
-  { label: "Logout", icon: faRightFromBracket, href: "/" },
+  { label: "Profile", icon: faUser, href: "/applicant/profile" },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -64,6 +65,19 @@ function SidebarLink({
 }
 
 export function ApplicantSidebar() {
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const router = useRouter();
+
+  async function handleSignOut() {
+    setIsSigningOut(true);
+
+    const supabase = createSupabaseBrowserClient();
+    await supabase.auth.signOut();
+
+    router.refresh();
+    router.replace("/");
+  }
+
   return (
     <aside className="fixed left-0 top-0 z-50 hidden h-full w-64 flex-col border-r border-blue-800 bg-blue-900 shadow-xl md:flex">
       <div className="p-6">
@@ -86,6 +100,15 @@ export function ApplicantSidebar() {
         {accountItems.map((item) => (
           <SidebarLink key={item.label} {...item} />
         ))}
+        <button
+          className="flex items-center gap-3 rounded-lg px-4 py-3 text-left text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+          disabled={isSigningOut}
+          onClick={handleSignOut}
+          type="button"
+        >
+          <FontAwesomeIcon aria-hidden="true" className="h-5 w-5" icon={faRightFromBracket} />
+          <span className="text-sm">{isSigningOut ? "Logging out..." : "Logout"}</span>
+        </button>
       </nav>
     </aside>
   );

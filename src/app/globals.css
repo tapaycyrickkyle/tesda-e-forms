@@ -23,7 +23,7 @@
   --color-outline: #747685;
   --color-outline-variant: #c4c5d5;
   --color-error: #ba1a1a;
-  --font-sans: var(--font-poppins);
+  --font-sans: var(--font-montserrat);
 }
 
 @layer base {
@@ -34,7 +34,7 @@
   }
 
   html {
-    font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
     -webkit-text-size-adjust: 100%;
   }
 

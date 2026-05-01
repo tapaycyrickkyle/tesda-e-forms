@@ -5,13 +5,14 @@ import {
   faArrowRight,
   faBuildingColumns,
   faCircleInfo,
-  faCircleQuestion,
   faClipboardCheck,
   faDownload,
   faFileLines,
   faLocationDot,
   faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
+import { getApplicantFirstName, getApplicantProfile } from "@/lib/applicant-profile";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Applicant Dashboard | TESDA E-Forms Portal",
@@ -41,13 +42,21 @@ const processSteps = [
   },
 ];
 
-export default function ApplicantPage() {
+export default async function ApplicantPage() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const firstName = user
+    ? getApplicantFirstName(getApplicantProfile(user))
+    : "Applicant";
+
   return (
     <>
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="p-6 lg:p-12">
           <div className="space-y-4 text-center md:text-left">
-            <h1 className="text-3xl font-bold text-primary">Welcome back, Juan!</h1>
+            <h1 className="text-3xl font-bold text-primary">Welcome back, {firstName}!</h1>
             <p className="max-w-4xl text-lg leading-8 text-secondary">
               Start your professional journey today. Complete your TESDA E-Forms application online
               and secure your vocational certification with Eastern Samar Provincial Office.
@@ -69,8 +78,8 @@ export default function ApplicantPage() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-1">
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="space-y-4 lg:col-span-1">
           <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-on-surface">Current Status</h2>
@@ -117,7 +126,7 @@ export default function ApplicantPage() {
         </div>
 
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2 lg:p-8">
-          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-primary">Application Process</h2>
               <p className="text-sm text-secondary">Follow these steps to complete your submission</p>
@@ -127,7 +136,7 @@ export default function ApplicantPage() {
             </span>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             {processSteps.map((step, index) => (
               <article
                 className="relative rounded-xl border border-slate-100 p-6 transition-colors hover:border-primary/30 hover:bg-blue-50/40"
@@ -149,7 +158,7 @@ export default function ApplicantPage() {
             ))}
           </div>
 
-          <div className="mt-8 flex gap-4 rounded-lg border border-outline-variant bg-surface-container-low p-4">
+          <div className="mt-5 flex gap-4 rounded-lg border border-outline-variant bg-surface-container-low p-4">
             <FontAwesomeIcon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-primary" icon={faCircleInfo} />
             <p className="text-sm italic text-on-surface-variant">
               Note: Online submission is only the first part of the process. Your application is not
@@ -158,22 +167,6 @@ export default function ApplicantPage() {
           </div>
         </section>
       </div>
-
-      <section className="flex flex-col items-center justify-between gap-4 rounded-xl bg-surface-container-highest p-6 md:flex-row">
-        <div className="flex items-center gap-4">
-          <FontAwesomeIcon aria-hidden="true" className="h-6 w-6 text-primary" icon={faCircleQuestion} />
-          <p className="text-sm font-medium text-on-surface-variant">
-            Need help with your application?{" "}
-            <Link className="font-bold text-primary hover:underline" href="#">
-              Contact Support
-            </Link>
-          </p>
-        </div>
-        <div className="text-center md:text-right">
-          <p className="text-xs font-bold uppercase tracking-widest text-secondary">Office Hours</p>
-          <p className="text-sm font-semibold">Mon - Fri: 8 AM - 5 PM</p>
-        </div>
-      </section>
     </>
   );
 }
