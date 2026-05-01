@@ -7,6 +7,7 @@ This project uses Supabase Auth for email and password login/sign-up.
 The project uses:
 
 - `@supabase/supabase-js`
+- `@supabase/ssr`
 
 ## Supabase environment variables
 
@@ -43,6 +44,8 @@ https://your-domain.com
 
 - Login uses `supabase.auth.signInWithPassword`.
 - Sign-up uses `supabase.auth.signUp`.
+- Supabase Auth sessions are stored in cookies for server-side route protection.
+- Applicant pages are protected in `src/proxy.ts` and verified again in the applicant layout with `supabase.auth.getClaims()`.
 - Sign-up stores `first_name`, `middle_name`, `surname`, and `full_name` in Supabase Auth user metadata.
 - If email confirmations are enabled, new users must confirm their email before signing in.
 - If email confirmations are disabled, successful sign-up redirects directly to the applicant dashboard.
@@ -50,5 +53,8 @@ https://your-domain.com
 ## Files
 
 - `src/lib/supabase/client.ts`
+- `src/lib/supabase/server.ts`
+- `src/lib/supabase/proxy.ts`
+- `src/proxy.ts`
 - `src/app/login-form.tsx`
 - `src/app/sign-up-form.tsx`
