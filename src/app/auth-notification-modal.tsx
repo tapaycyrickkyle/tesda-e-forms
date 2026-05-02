@@ -29,7 +29,7 @@ export function AuthNotificationModal({
       className="fixed inset-0 z-50 grid place-items-center bg-black/40 px-4 py-6"
       role="dialog"
     >
-      <div className="w-full max-w-sm rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-2xl">
+      <div className="w-full max-w-sm rounded-lg border border-outline-variant bg-surface-container-lowest p-5 shadow-2xl">
         <div className="mb-4 flex items-start justify-between gap-4">
           <div
             className={
@@ -46,7 +46,7 @@ export function AuthNotificationModal({
           </div>
           <button
             aria-label="Close notification"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container hover:text-on-surface"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container hover:text-on-surface"
             onClick={onClose}
             type="button"
           >
@@ -60,7 +60,7 @@ export function AuthNotificationModal({
         <p className="text-sm leading-6 text-secondary">{message}</p>
 
         <button
-          className="mt-6 flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95"
+          className="mt-6 flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95"
           onClick={onClose}
           type="button"
         >

@@ -53,8 +53,8 @@ function SidebarLink({
       aria-current={isActive ? "page" : undefined}
       className={
         isActive
-          ? "flex items-center gap-3 rounded-lg bg-blue-800/80 px-4 py-3 font-semibold text-white shadow-inner transition-colors"
-          : "flex items-center gap-3 rounded-lg px-4 py-3 text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white"
+          ? "flex min-h-10 items-center gap-3 rounded-lg bg-blue-800/80 px-4 py-2.5 font-semibold text-white shadow-inner transition-colors"
+          : "flex min-h-10 items-center gap-3 rounded-lg px-4 py-2.5 text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white"
       }
       href={href}
     >
@@ -80,7 +80,7 @@ export function ApplicantSidebar() {
 
   return (
     <aside className="fixed left-0 top-0 z-50 hidden h-full w-64 flex-col border-r border-blue-800 bg-blue-900 shadow-xl md:flex">
-      <div className="p-6">
+      <div className="p-5">
         <div className="text-xl font-semibold tracking-tight text-white">
           <span>TESDA E-Forms</span>
         </div>
@@ -101,7 +101,7 @@ export function ApplicantSidebar() {
           <SidebarLink key={item.label} {...item} />
         ))}
         <button
-          className="flex items-center gap-3 rounded-lg px-4 py-3 text-left text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex min-h-10 items-center gap-3 rounded-lg px-4 py-2.5 text-left text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isSigningOut}
           onClick={handleSignOut}
           type="button"

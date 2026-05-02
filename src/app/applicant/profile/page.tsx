@@ -23,8 +23,8 @@ function DetailItem({
 }>) {
   return (
     <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-bold uppercase tracking-widest text-secondary">{label}</p>
-      <p className="mt-2 text-base font-semibold text-on-surface">{value || "Not provided"}</p>
+      <p className="text-sm font-bold uppercase tracking-widest text-secondary">{label}</p>
+      <p className="mt-2 text-sm font-semibold text-on-surface">{value || "Not provided"}</p>
     </div>
   );
 }
@@ -44,8 +44,8 @@ export default async function ProfilePage() {
 
   return (
     <>
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center">
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-50 text-primary">
             <FontAwesomeIcon aria-hidden="true" className="h-14 w-14 scale-125" icon={faUser} />
           </div>
@@ -53,10 +53,10 @@ export default async function ProfilePage() {
             <p className="text-sm font-bold uppercase tracking-widest text-secondary">
               Applicant Profile
             </p>
-            <h1 className="mt-2 break-words text-3xl font-bold text-primary">
+            <h1 className="mt-2 break-words text-3xl font-bold leading-tight text-primary">
               {profile.fullName}
             </h1>
-            <p className="mt-2 flex items-center gap-2 text-sm text-secondary">
+            <p className="mt-2 flex items-center gap-2 text-sm leading-6 text-secondary">
               <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faEnvelope} />
               {profile.email || "No email address"}
             </p>
@@ -64,10 +64,10 @@ export default async function ProfilePage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
         <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
           <FontAwesomeIcon aria-hidden="true" className="h-5 w-5 text-primary" icon={faIdCard} />
-          <h2 className="text-2xl font-semibold text-primary">Account Information</h2>
+          <h2 className="text-xl font-semibold text-primary">Account Information</h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">

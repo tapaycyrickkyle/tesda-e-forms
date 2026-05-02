@@ -82,7 +82,7 @@ export default function LoginForm() {
           </span>
           <input
             autoComplete="email"
-            className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-4 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
+            className="min-h-11 w-full rounded-lg border border-outline-variant bg-surface-bright py-2.5 pl-10 pr-4 text-base leading-6 text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="email"
             name="email"
             onChange={clearError}
@@ -98,7 +98,7 @@ export default function LoginForm() {
           <label className="text-sm font-semibold text-on-surface" htmlFor="password">
             Password
           </label>
-          <a className="text-sm font-semibold text-primary hover:underline" href="#">
+          <a className="inline-flex min-h-10 items-center text-sm font-semibold text-primary hover:underline" href="#">
             Forgot password?
           </a>
         </div>
@@ -108,7 +108,7 @@ export default function LoginForm() {
           </span>
           <input
             autoComplete="current-password"
-            className="w-full rounded-lg border border-outline-variant bg-surface-bright py-3 pl-10 pr-11 text-base text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
+            className="min-h-11 w-full rounded-lg border border-outline-variant bg-surface-bright py-2.5 pl-10 pr-12 text-base leading-6 text-on-surface outline-none transition-all placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
             id="password"
             name="password"
             onChange={clearError}
@@ -118,7 +118,7 @@ export default function LoginForm() {
           />
           <button
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center text-outline transition-colors hover:text-on-surface"
+            className="absolute right-1 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container hover:text-on-surface"
             onClick={() => setShowPassword((current) => !current)}
             type="button"
           >
@@ -128,7 +128,7 @@ export default function LoginForm() {
       </div>
 
       <button
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-4 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+        className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
         disabled={isSubmitting}
         type="submit"
       >
