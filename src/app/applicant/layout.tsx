@@ -30,7 +30,7 @@ export default async function ApplicantLayout({
         <ApplicantSidebar />
 
         <main className="min-h-screen md:pl-64">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-4 sm:p-5 lg:p-8">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-4 sm:p-5 lg:p-6">
             {children}
           </div>
         </main>

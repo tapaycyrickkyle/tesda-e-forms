@@ -268,7 +268,7 @@ function Field({
 }>) {
   return (
     <label className="space-y-2">
-      <span className="block text-xs font-semibold text-on-surface-variant">{label}</span>
+      <span className="block text-sm font-semibold text-on-surface-variant">{label}</span>
       {children}
     </label>
   );
@@ -285,7 +285,7 @@ function TextInput({
 }>) {
   return (
     <input
-      className="w-full rounded-md border border-outline-variant bg-white px-3 py-2 text-sm text-on-surface outline-none transition-colors placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary"
+      className="min-h-11 w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5 text-base leading-6 text-on-surface outline-none transition-colors placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
       name={name}
       placeholder={placeholder}
       type={type}
@@ -294,16 +294,20 @@ function TextInput({
 }
 
 function RadioOption({
+  className = "",
   label,
   name,
 }: Readonly<{
+  className?: string;
   label: string;
   name: string;
 }>) {
   return (
-    <label className="flex items-center gap-2 rounded-md border border-outline-variant bg-white px-3 py-1.5">
+    <label
+      className={`flex min-h-10 items-center gap-2 rounded-lg border border-outline-variant bg-white px-3 py-2 ${className}`}
+    >
       <input className="accent-primary" name={name} type="radio" />
-      <span className="text-xs text-on-surface">{label}</span>
+      <span className="text-sm leading-5 text-on-surface">{label}</span>
     </label>
   );
 }
@@ -329,7 +333,7 @@ function FormSection({
     <section>
       <div className="mb-5 flex items-center gap-3 border-b border-slate-100 pb-3">
         <FontAwesomeIcon aria-hidden="true" className="h-5 w-5 text-primary" icon={icon} />
-        <h2 className="text-2xl font-semibold text-primary">{title}</h2>
+        <h2 className="text-xl font-semibold text-primary">{title}</h2>
       </div>
       {children}
     </section>
@@ -368,12 +372,12 @@ function EntryGroups({
       {Array.from({ length: count }, (_, entryIndex) => (
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-4" key={entryIndex}>
           <div className="mb-4 flex items-center justify-between gap-3">
-            <p className="text-xs font-bold uppercase text-secondary">
+            <p className="text-sm font-bold uppercase text-secondary">
               Entry {entryIndex + 1}
             </p>
             {entryIndex > 0 && entryIndex === count - 1 ? (
               <button
-                className="rounded-md border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-white hover:text-error"
+                className="min-h-11 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-white hover:text-error"
                 onClick={onRemove}
                 type="button"
               >
@@ -395,7 +399,7 @@ function EntryGroups({
       ))}
       <div className="flex justify-end">
         <button
-          className="inline-flex w-full items-center justify-center rounded-lg border-2 border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-blue-50 sm:w-auto"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border-2 border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-blue-50 sm:w-auto"
           onClick={onAdd}
           type="button"
         >
@@ -456,21 +460,21 @@ export function ApplicationFormClient() {
 
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-3">
-              <h1 className="text-3xl font-bold text-primary">{t.title}</h1>
+              <h1 className="text-3xl font-bold leading-tight text-primary">{t.title}</h1>
             <div className="flex flex-col gap-1">
-              <p className="text-xs font-bold uppercase text-secondary">
+              <p className="text-sm font-bold uppercase text-secondary">
                 {t.stepCount} {activeStep + 1} {t.of} {t.steps.length}
               </p>
-              <p className="text-sm text-secondary">{t.stepDescriptions[activeStep]}</p>
+              <p className="max-w-3xl text-sm leading-6 text-secondary">{t.stepDescriptions[activeStep]}</p>
             </div>
             </div>
             <div className="flex w-fit shrink-0 items-center rounded-lg border border-outline-variant bg-white p-1">
-              <span className="px-3 text-xs font-semibold text-secondary">{t.language}</span>
+              <span className="px-3 text-sm font-semibold text-secondary">{t.language}</span>
               <button
                 className={
                   language === "en"
-                    ? "rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-white"
-                    : "rounded-md px-3 py-1.5 text-xs font-semibold text-secondary transition-colors hover:bg-surface-container"
+                    ? "min-h-10 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white"
+                    : "min-h-10 rounded-md px-3 py-2 text-sm font-semibold text-secondary transition-colors hover:bg-surface-container"
                 }
                 onClick={() => setLanguage("en")}
                 type="button"
@@ -480,8 +484,8 @@ export function ApplicationFormClient() {
               <button
                 className={
                   language === "tl"
-                    ? "rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-white"
-                    : "rounded-md px-3 py-1.5 text-xs font-semibold text-secondary transition-colors hover:bg-surface-container"
+                    ? "min-h-10 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white"
+                    : "min-h-10 rounded-md px-3 py-2 text-sm font-semibold text-secondary transition-colors hover:bg-surface-container"
                 }
                 onClick={() => setLanguage("tl")}
                 type="button"
@@ -506,10 +510,10 @@ export function ApplicationFormClient() {
                     aria-label={`Go to ${step}`}
                     className={
                       isActive
-                        ? "flex h-10 w-10 items-center justify-center rounded-full bg-primary font-bold text-white shadow-md"
+                        ? "flex h-11 w-11 items-center justify-center rounded-full bg-primary font-bold text-white shadow-md"
                         : isComplete
-                          ? "flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-white font-bold text-primary transition-colors hover:bg-blue-50"
-                          : "flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-200 bg-white font-bold text-slate-400 transition-colors hover:border-primary/50 hover:text-primary"
+                          ? "flex h-11 w-11 items-center justify-center rounded-full border-2 border-primary bg-white font-bold text-primary transition-colors hover:bg-blue-50"
+                          : "flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-200 bg-white font-bold text-slate-400 transition-colors hover:border-primary/50 hover:text-primary"
                     }
                     onClick={() => setActiveStep(index)}
                     type="button"
@@ -519,8 +523,8 @@ export function ApplicationFormClient() {
                   <button
                     className={
                       isActive || isComplete
-                        ? "text-center text-sm font-semibold text-primary"
-                        : "text-center text-sm font-semibold text-slate-400 transition-colors hover:text-primary"
+                        ? "min-h-11 text-center text-sm font-semibold text-primary"
+                        : "min-h-11 text-center text-sm font-semibold text-slate-400 transition-colors hover:text-primary"
                     }
                     onClick={() => setActiveStep(index)}
                     type="button"
@@ -534,7 +538,7 @@ export function ApplicationFormClient() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
+      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
         <form className="space-y-10">
           <div className={activeStep === 0 ? "space-y-10" : "hidden"}>
               <FormSection icon={faClipboardCheck} title={t.sections.assessmentDetails}>
@@ -552,11 +556,22 @@ export function ApplicationFormClient() {
                     <span className="block text-sm font-semibold text-on-surface-variant">
                       {t.labels.assessmentType}
                     </span>
-                    <OptionGroup>
+                    <div className="flex flex-wrap gap-2">
                       {t.options.assessmentTypes.map((assessmentType) => (
-                        <RadioOption key={assessmentType} label={assessmentType} name="assessment_type" />
+                        <RadioOption
+                          className={
+                            assessmentType === "Full Qualification"
+                              ? "min-w-44 flex-[1.5_1_11rem]"
+                              : assessmentType === "COC"
+                                ? "min-w-20 flex-[0.6_1_5rem]"
+                                : "min-w-28 flex-1"
+                          }
+                          key={assessmentType}
+                          label={assessmentType}
+                          name="assessment_type"
+                        />
                       ))}
-                    </OptionGroup>
+                    </div>
                   </div>
                 </div>
               </FormSection>
@@ -700,7 +715,7 @@ export function ApplicationFormClient() {
 
           <div className={activeStep === 2 ? "space-y-10" : "hidden"}>
             <FormSection icon={faBriefcase} title={t.sections.workExperience}>
-              <p className="mb-4 text-sm text-secondary">{t.tableNotes.workExperience}</p>
+              <p className="mb-4 text-sm leading-6 text-secondary">{t.tableNotes.workExperience}</p>
               <EntryGroups
                 addLabel={t.addEntry}
                 count={entryCounts.workExperience}
@@ -715,7 +730,7 @@ export function ApplicationFormClient() {
 
           <div className={activeStep === 3 ? "space-y-10" : "hidden"}>
             <FormSection icon={faGraduationCap} title={t.sections.training}>
-              <p className="mb-4 text-sm text-secondary">{t.tableNotes.training}</p>
+              <p className="mb-4 text-sm leading-6 text-secondary">{t.tableNotes.training}</p>
               <EntryGroups
                 addLabel={t.addEntry}
                 count={entryCounts.training}
@@ -757,7 +772,7 @@ export function ApplicationFormClient() {
 
           <div className="flex flex-col gap-4 border-t border-slate-200 pt-8 md:flex-row md:items-center md:justify-between">
             <button
-              className="order-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 md:order-1 md:w-auto"
+              className="order-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border-2 border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 md:order-1 md:w-auto"
               type="button"
             >
               <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faSave} />
@@ -766,7 +781,7 @@ export function ApplicationFormClient() {
 
             <div className="order-1 flex w-full flex-col gap-4 md:order-2 md:w-auto md:flex-row">
               <button
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border-2 border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
                 disabled={isFirstStep}
                 onClick={goToPreviousStep}
                 type="button"
@@ -775,7 +790,7 @@ export function ApplicationFormClient() {
               </button>
               {isLastStep ? (
                 <button
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-primary-container md:w-auto"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-primary-container md:w-auto"
                 type="submit"
                 >
                   <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faPrint} />
@@ -783,7 +798,7 @@ export function ApplicationFormClient() {
                 </button>
               ) : (
                 <button
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-primary-container md:w-auto"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-primary-container md:w-auto"
                   onClick={goToNextStep}
                   type="button"
                 >
@@ -796,7 +811,7 @@ export function ApplicationFormClient() {
       </section>
 
       <section className="rounded-lg border border-blue-100 bg-blue-50 p-4 lg:hidden">
-        <p className="text-center text-xs text-blue-800">
+        <p className="text-center text-sm leading-6 text-blue-800">
           {t.mobileReminder}
         </p>
       </section>

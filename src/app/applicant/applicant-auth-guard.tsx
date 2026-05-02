@@ -51,7 +51,7 @@ export function ApplicantAuthGuard({
   if (isCheckingAuth) {
     return (
       <div className="app-shell grid min-h-screen place-items-center px-4 text-center">
-        <p className="text-sm font-semibold text-secondary">Checking your session...</p>
+        <p className="text-base font-semibold leading-6 text-secondary">Checking your session...</p>
       </div>
     );
   }

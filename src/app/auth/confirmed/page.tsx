@@ -13,7 +13,7 @@ export default function AuthConfirmedPage() {
     <main className="app-shell relative flex items-center justify-center overflow-hidden px-4 pb-4 pt-12 sm:px-6 sm:pb-6 sm:pt-16">
       <section className="z-10 flex w-full max-w-md flex-col items-center">
         <div className="mb-6 text-center">
-          <h1 className="mb-1 text-3xl font-bold leading-tight text-primary">
+          <h1 className="mb-2 text-3xl font-bold leading-tight text-primary">
             Email Confirmed
           </h1>
           <p className="mx-auto max-w-xs text-sm leading-6 text-secondary">
@@ -21,7 +21,7 @@ export default function AuthConfirmedPage() {
           </p>
         </div>
 
-        <div className="w-full rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center shadow-xl">
+        <div className="w-full rounded-lg border border-outline-variant bg-surface-container-lowest p-5 text-center shadow-xl sm:p-6">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-700">
             <FontAwesomeIcon aria-hidden="true" className="h-14 w-14" icon={faCheck} />
           </div>
@@ -29,7 +29,7 @@ export default function AuthConfirmedPage() {
             Thank you for confirming your email address.
           </p>
           <Link
-            className="flex w-full items-center justify-center rounded-lg bg-primary px-4 py-4 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95"
+            className="flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-base font-semibold text-on-primary shadow-sm transition-all hover:bg-primary-container hover:shadow-md active:scale-95"
             href="/"
           >
             Go to Login
