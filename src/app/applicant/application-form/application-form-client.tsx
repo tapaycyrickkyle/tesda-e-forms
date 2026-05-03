@@ -471,6 +471,11 @@ export function ApplicationFormClient() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!isLastStep) {
+      return;
+    }
+
     setIsGeneratingPdf(true);
 
     try {
