@@ -21,23 +21,38 @@ export const metadata: Metadata = {
 
 const processSteps = [
   {
-    title: "Fill out online form",
-    text: "Enter your personal information, educational background, and preferred course details.",
+    title: "Assessment",
+    text: "Provide school/training center details, select the title of assessment applied for, choose assessment type, and client type.",
     icon: faPenToSquare,
   },
   {
-    title: "Review details",
-    text: "Verify all information provided. Incorrect details may lead to processing delays.",
+    title: "Profile",
+    text: "Encode personal information, address, contact details, civil status, education, employment, and birth information.",
     icon: faClipboardCheck,
   },
   {
-    title: "Download or print form",
-    text: "Generated forms must be printed on A4 paper for final submission.",
+    title: "Experience",
+    text: "List your National Qualification-related work experience entries with position, dates, and appointment details.",
+    icon: faFileLines,
+  },
+  {
+    title: "Training",
+    text: "Add your National Qualification-related trainings and seminars attended.",
+    icon: faFileLines,
+  },
+  {
+    title: "Credentials",
+    text: "Enter licensure examination and competency assessment records, including issuance and validity details.",
+    icon: faFileLines,
+  },
+  {
+    title: "Self-Assessment",
+    text: "Answer the Self-Assessment Guide questions based on your selected assessment title.",
     icon: faDownload,
   },
   {
-    title: "Submit physically",
-    text: "Bring the signed form to the TESDA Eastern Samar Provincial Office for verification.",
+    title: "Summary and Submission",
+    text: "Review your encoded data in Summary, then click Finish to generate and compile your PDFs in My Application.",
     icon: faBuildingColumns,
   },
 ];
@@ -84,33 +99,6 @@ export default async function ApplicantPage() {
 
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-1">
-          <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-semibold text-on-surface">Current Status</h2>
-              <span className="rounded bg-surface-container px-2 py-1 text-sm font-bold uppercase text-secondary">
-                Live
-              </span>
-            </div>
-
-            <div className="flex flex-col items-center rounded-lg border border-dashed border-outline-variant bg-surface-container-low p-6 text-center">
-              <FontAwesomeIcon aria-hidden="true" className="mb-3 h-12 w-12 text-outline" icon={faFileLines} />
-              <p className="font-semibold text-on-surface-variant">No Active Application</p>
-              <p className="mt-1 text-sm leading-6 text-secondary">
-                You haven&apos;t submitted any forms for the current period.
-              </p>
-            </div>
-
-            <div className="mt-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <FontAwesomeIcon aria-hidden="true" className="h-5 w-5 text-error" icon={faCircleInfo} />
-                <p className="text-sm font-semibold text-on-surface">Deadline: Oct 30, 2024</p>
-              </div>
-              <div className="h-2 w-full rounded-full bg-surface-container">
-                <div className="h-2 w-0 rounded-full bg-primary" />
-              </div>
-            </div>
-          </section>
-
           <section className="rounded-lg bg-blue-900 p-5 text-white shadow-xl">
             <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
               <FontAwesomeIcon aria-hidden="true" className="h-5 w-5" icon={faLocationDot} />
@@ -151,7 +139,7 @@ export default async function ApplicantPage() {
               <p className="text-sm leading-6 text-secondary">Follow these steps to complete your submission</p>
             </div>
             <span className="w-fit rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-bold text-primary">
-              4 STEPS TO GO
+              7 STEPS TO GO
             </span>
           </div>
 
