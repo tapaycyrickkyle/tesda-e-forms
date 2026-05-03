@@ -4,7 +4,7 @@ import LoginForm from "./login-form";
 
 export default function Home() {
   return (
-    <main className="app-shell relative flex items-center justify-center overflow-hidden px-4 pb-4 pt-12 sm:px-6 sm:pb-6 sm:pt-16">
+    <main className="app-shell relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-6 sm:px-6 sm:py-8">
       <Image
         alt=""
         aria-hidden="true"

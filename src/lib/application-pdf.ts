@@ -3,6 +3,7 @@ import { PDFDocument, PDFFont, PDFPage, StandardFonts, rgb } from "pdf-lib";
 type PdfFormValues = Record<string, string>;
 
 const pdfPath = "/forms/application-form.pdf";
+const consentPdfPath = "/forms/consent-form.pdf";
 const PROFILE_CALIBRATION_MODE = false;
 
 const PROFILE_NAME_GRID = {
@@ -23,7 +24,7 @@ function isSelected(value: string, option: string) {
   return value === option.toUpperCase();
 }
 
-function collectFormValues(form: HTMLFormElement) {
+export function collectFormValues(form: HTMLFormElement) {
   const formData = new FormData(form);
   const values: PdfFormValues = {};
 
@@ -32,6 +33,12 @@ function collectFormValues(form: HTMLFormElement) {
   }
 
   return values;
+}
+
+function toPdfBlob(pdfBytes: Uint8Array) {
+  const pdfBuffer = new ArrayBuffer(pdfBytes.length);
+  new Uint8Array(pdfBuffer).set(pdfBytes);
+  return new Blob([pdfBuffer], { type: "application/pdf" });
 }
 
 function drawValue({
@@ -461,7 +468,7 @@ function drawSecondPage(page: PDFPage, font: PDFFont, values: PdfFormValues) {
   });
 }
 
-export async function downloadFilledApplicationPdf(form: HTMLFormElement) {
+export async function generateFilledApplicationPdfBlob(form: HTMLFormElement) {
   const values = collectFormValues(form);
   const sourcePdf = await fetch(pdfPath).then((response) => {
     if (!response.ok) {
@@ -484,9 +491,84 @@ export async function downloadFilledApplicationPdf(form: HTMLFormElement) {
   }
 
   const pdfBytes = await pdf.save();
-  const pdfBuffer = new ArrayBuffer(pdfBytes.length);
-  new Uint8Array(pdfBuffer).set(pdfBytes);
-  const blob = new Blob([pdfBuffer], { type: "application/pdf" });
+  return toPdfBlob(pdfBytes);
+}
+
+export async function generateSAGCompilationPdfBlob({
+  assessmentTitle,
+  responses,
+}: {
+  assessmentTitle: string;
+  responses: Array<{ answer: string; question: string; section: string }>;
+}) {
+  const pdf = await PDFDocument.create();
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  let page = pdf.addPage([612, 792]);
+  let y = 760;
+
+  const writeLine = (text: string, size = 10, indent = 0) => {
+    if (y < 50) {
+      page = pdf.addPage([612, 792]);
+      y = 760;
+    }
+    page.drawText(text, {
+      font,
+      maxWidth: 560 - indent,
+      size,
+      x: 30 + indent,
+      y,
+    });
+    y -= size + 6;
+  };
+
+  writeLine("SELF-ASSESSMENT GUIDE - COMPILATION", 13);
+  writeLine(`ASSESSMENT TITLE: ${assessmentTitle || "N/A"}`, 10);
+  y -= 4;
+
+  let currentSection = "";
+  responses.forEach((entry, index) => {
+    if (entry.section !== currentSection) {
+      currentSection = entry.section;
+      y -= 4;
+      writeLine(currentSection, 10);
+    }
+    writeLine(`${index + 1}. [${entry.answer}] ${entry.question}`, 9, 10);
+  });
+
+  const pdfBytes = await pdf.save();
+  return toPdfBlob(pdfBytes);
+}
+
+export async function generateConsentFormPdfBlob({
+  applicantName,
+}: {
+  applicantName: string;
+}) {
+  const sourcePdf = await fetch(consentPdfPath).then((response) => {
+    if (!response.ok) {
+      throw new Error("Unable to load the consent form PDF template.");
+    }
+    return response.arrayBuffer();
+  });
+
+  const pdf = await PDFDocument.load(sourcePdf);
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  const [page] = pdf.getPages();
+  if (page) {
+    page.drawText(applicantName.toUpperCase(), {
+      font,
+      maxWidth: 220,
+      size: 9,
+      x: 120,
+      y: 145,
+    });
+  }
+  const pdfBytes = await pdf.save();
+  return toPdfBlob(pdfBytes);
+}
+
+export async function downloadFilledApplicationPdf(form: HTMLFormElement) {
+  const blob = await generateFilledApplicationPdfBlob(form);
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

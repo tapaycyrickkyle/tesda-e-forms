@@ -29,8 +29,8 @@ export function AuthNotificationModal({
       className="fixed inset-0 z-50 grid place-items-center bg-black/40 px-4 py-6"
       role="dialog"
     >
-      <div className="w-full max-w-sm rounded-lg border border-outline-variant bg-surface-container-lowest p-5 shadow-2xl">
-        <div className="mb-4 flex items-start justify-between gap-4">
+      <div className="relative w-full max-w-sm rounded-lg border border-outline-variant bg-surface-container-lowest p-5 text-center shadow-2xl">
+        <div className="mb-4 flex justify-center">
           <div
             className={
               isError
@@ -44,15 +44,15 @@ export function AuthNotificationModal({
               icon={isError ? faCircleExclamation : faCircleCheck}
             />
           </div>
-          <button
-            aria-label="Close notification"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container hover:text-on-surface"
-            onClick={onClose}
-            type="button"
-          >
-            <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faXmark} />
-          </button>
         </div>
+        <button
+          aria-label="Close notification"
+          className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container hover:text-on-surface"
+          onClick={onClose}
+          type="button"
+        >
+          <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faXmark} />
+        </button>
 
         <h2 className="mb-2 text-xl font-semibold text-on-surface" id="auth-notification-title">
           {title}
