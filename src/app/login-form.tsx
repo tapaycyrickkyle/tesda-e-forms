@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AuthLoadingModal } from "./auth-loading-modal";
 import { AuthNotificationModal } from "./auth-notification-modal";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
@@ -68,6 +69,12 @@ export default function LoginForm() {
           onClose={() => setNotification("")}
           title="Login Failed"
           type="error"
+        />
+      ) : null}
+      {isSubmitting ? (
+        <AuthLoadingModal
+          message="Please wait while we verify your account."
+          title="Logging in"
         />
       ) : null}
 

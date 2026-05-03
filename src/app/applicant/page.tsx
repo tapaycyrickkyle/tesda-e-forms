@@ -42,6 +42,10 @@ const processSteps = [
   },
 ];
 
+const provincialOfficeAddress =
+  "TESDA Eastern Samar, Brgy. Alang-alang, Borongan City, Eastern Samar, 6800";
+const provincialOfficeMapQuery = encodeURIComponent(provincialOfficeAddress);
+
 export default async function ApplicantPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -119,9 +123,24 @@ export default async function ApplicantPage() {
               <br />
               Eastern Samar, 6800
             </p>
-            <div className="grid h-32 place-items-center rounded-lg border border-blue-700 bg-blue-800 text-blue-100">
-              <FontAwesomeIcon aria-hidden="true" className="h-12 w-12 opacity-80" icon={faLocationDot} />
+            <div className="overflow-hidden rounded-lg border border-blue-700 bg-blue-800">
+              <iframe
+                className="h-48 w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps?q=${provincialOfficeMapQuery}&output=embed`}
+                title="Map showing TESDA Eastern Samar Provincial Office"
+              />
             </div>
+            <a
+              className="mt-3 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-blue-700 px-4 py-2.5 text-sm font-semibold text-blue-50 transition-colors hover:bg-blue-800"
+              href={`https://www.google.com/maps/search/?api=1&query=${provincialOfficeMapQuery}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faLocationDot} />
+              Open in Maps
+            </a>
           </section>
         </div>
 
