@@ -12,6 +12,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { AuthLoadingModal } from "../auth-loading-modal";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const navItems = [
@@ -79,37 +80,46 @@ export function ApplicantSidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 z-50 hidden h-full w-64 flex-col border-r border-blue-800 bg-blue-900 shadow-xl md:flex">
-      <div className="p-5">
-        <div className="text-xl font-semibold tracking-tight text-white">
-          <span>TESDA E-Forms</span>
+    <>
+      {isSigningOut ? (
+        <AuthLoadingModal
+          message="Please wait while we close your session."
+          title="Logging out"
+        />
+      ) : null}
+
+      <aside className="fixed left-0 top-0 z-50 hidden h-full w-64 flex-col border-r border-blue-800 bg-blue-900 shadow-xl md:flex">
+        <div className="p-5">
+          <div className="text-xl font-semibold tracking-tight text-white">
+            <span>TESDA E-Forms</span>
+          </div>
         </div>
-      </div>
 
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
-        <p className="mb-4 px-4 text-xs font-bold uppercase tracking-widest text-blue-100/60">
-          Main Menu
-        </p>
-        {navItems.map((item) => (
-          <SidebarLink key={item.label} {...item} />
-        ))}
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
+          <p className="mb-4 px-4 text-xs font-bold uppercase tracking-widest text-blue-100/60">
+            Main Menu
+          </p>
+          {navItems.map((item) => (
+            <SidebarLink key={item.label} {...item} />
+          ))}
 
-        <p className="mb-4 mt-8 px-4 text-xs font-bold uppercase tracking-widest text-blue-100/60">
-          Account
-        </p>
-        {accountItems.map((item) => (
-          <SidebarLink key={item.label} {...item} />
-        ))}
-        <button
-          className="flex min-h-10 items-center gap-3 rounded-lg px-4 py-2.5 text-left text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={isSigningOut}
-          onClick={handleSignOut}
-          type="button"
-        >
-          <FontAwesomeIcon aria-hidden="true" className="h-5 w-5" icon={faRightFromBracket} />
-          <span className="text-sm">{isSigningOut ? "Logging out..." : "Logout"}</span>
-        </button>
-      </nav>
-    </aside>
+          <p className="mb-4 mt-8 px-4 text-xs font-bold uppercase tracking-widest text-blue-100/60">
+            Account
+          </p>
+          {accountItems.map((item) => (
+            <SidebarLink key={item.label} {...item} />
+          ))}
+          <button
+            className="flex min-h-10 items-center gap-3 rounded-lg px-4 py-2.5 text-left text-blue-100/80 transition-colors hover:bg-blue-800/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={isSigningOut}
+            onClick={handleSignOut}
+            type="button"
+          >
+            <FontAwesomeIcon aria-hidden="true" className="h-5 w-5" icon={faRightFromBracket} />
+            <span className="text-sm">{isSigningOut ? "Logging out..." : "Logout"}</span>
+          </button>
+        </nav>
+      </aside>
+    </>
   );
 }

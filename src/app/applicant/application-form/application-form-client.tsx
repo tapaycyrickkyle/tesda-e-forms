@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,6 +14,7 @@ import {
   faSave,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { downloadFilledApplicationPdf } from "@/lib/application-pdf";
 
 type FormLanguage = "en" | "tl";
 
@@ -32,13 +34,14 @@ const translations = {
     removeEntry: "Remove",
     mobileReminder:
       "Reminder: This portal is for data encoding. Physical submission at Eastern Samar Provincial Office is mandatory.",
-    steps: ["Assessment", "Profile", "Experience", "Training", "Credentials"],
+    steps: ["Assessment", "Profile", "Experience", "Training", "Credentials", "Admission"],
     stepDescriptions: [
       "School, assessment title, assessment type, and client category.",
       "Personal details, address, contact information, education, and employment.",
       "National Qualification-related work history.",
       "National Qualification-related trainings and seminars.",
       "Licensure, competency certificates, and other supporting information.",
+      "Admission slip and assessment proceedings details.",
     ],
     sections: {
       assessmentDetails: "Assessment Details",
@@ -48,6 +51,7 @@ const translations = {
       training: "Other Training / Seminars Attended",
       licensure: "Licensure Examination(s) Passed",
       competency: "Competency Assessment(s) Passed",
+      admissionSlip: "Admission Slip",
     },
     labels: {
       school: "Name of School / Training Center / Company",
@@ -73,6 +77,10 @@ const translations = {
       birthDate: "Birth Date",
       birthPlace: "Birth Place",
       age: "Age",
+      applicantName: "Name of Applicant",
+      admissionTel: "Tel. Number",
+      admissionAssessment: "Assessment Applied For",
+      officialReceiptNumber: "Official Receipt Number",
     },
     placeholders: {
       nameExtension: "e.g. Jr., Sr.",
@@ -152,13 +160,14 @@ const translations = {
     removeEntry: "Tanggalin",
     mobileReminder:
       "Paalala: Ang portal na ito ay para sa pag-encode ng datos. Kailangang isumite pa rin nang personal sa TESDA Eastern Samar Provincial Office.",
-    steps: ["Assessment", "Profile", "Karanasan", "Pagsasanay", "Kredensyal"],
+    steps: ["Assessment", "Profile", "Karanasan", "Pagsasanay", "Kredensyal", "Admission"],
     stepDescriptions: [
       "Paaralan o training center, assessment na ina-applyan, uri ng assessment, at client type.",
       "Personal na detalye, tirahan, contact information, edukasyon, at trabaho.",
       "Karanasan sa trabaho na may kaugnayan sa National Qualification.",
       "Mga training at seminar na may kaugnayan sa National Qualification.",
       "Licensure, competency certificates, at iba pang karagdagang impormasyon.",
+      "Admission slip at detalye ng assessment proceedings.",
     ],
     sections: {
       assessmentDetails: "Detalye ng Assessment",
@@ -168,6 +177,7 @@ const translations = {
       training: "Ibang Training / Seminar na Nadaluhan",
       licensure: "Naipasang Licensure Examination",
       competency: "Naipasang Competency Assessment",
+      admissionSlip: "Admission Slip",
     },
     labels: {
       school: "Pangalan ng Paaralan / Training Center / Kumpanya",
@@ -193,6 +203,10 @@ const translations = {
       birthDate: "Petsa ng Kapanganakan",
       birthPlace: "Lugar ng Kapanganakan",
       age: "Edad",
+      applicantName: "Pangalan ng Aplikante",
+      admissionTel: "Tel. Number",
+      admissionAssessment: "Assessment na Ina-applyan",
+      officialReceiptNumber: "Official Receipt Number",
     },
     placeholders: {
       nameExtension: "hal. Jr., Sr.",
@@ -283,11 +297,21 @@ function TextInput({
   placeholder?: string;
   type?: string;
 }>) {
+  const shouldUppercase = type === "text";
+
   return (
     <input
       className="min-h-11 w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5 text-base leading-6 text-on-surface outline-none transition-colors placeholder:text-outline focus:border-primary focus:ring-2 focus:ring-primary/25"
       name={name}
+      onInput={
+        shouldUppercase
+          ? (event) => {
+              event.currentTarget.value = event.currentTarget.value.toUpperCase();
+            }
+          : undefined
+      }
       placeholder={placeholder}
+      style={shouldUppercase ? { textTransform: "uppercase" } : undefined}
       type={type}
     />
   );
@@ -306,7 +330,7 @@ function RadioOption({
     <label
       className={`flex min-h-10 items-center gap-2 rounded-lg border border-outline-variant bg-white px-3 py-2 ${className}`}
     >
-      <input className="accent-primary" name={name} type="radio" />
+      <input className="accent-primary" name={name} type="radio" value={label} />
       <span className="text-sm leading-5 text-on-surface">{label}</span>
     </label>
   );
@@ -411,6 +435,7 @@ function EntryGroups({
 }
 export function ApplicationFormClient() {
   const [activeStep, setActiveStep] = useState(0);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [language, setLanguage] = useState<FormLanguage>("en");
   const [entryCounts, setEntryCounts] = useState({
     competency: 1,
@@ -442,6 +467,22 @@ export function ApplicationFormClient() {
       ...current,
       [section]: Math.max(current[section] - 1, 1),
     }));
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!isLastStep) {
+      return;
+    }
+
+    setIsGeneratingPdf(true);
+
+    try {
+      await downloadFilledApplicationPdf(event.currentTarget);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   }
 
   return (
@@ -539,18 +580,18 @@ export function ApplicationFormClient() {
       </section>
 
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:p-6">
-        <form className="space-y-10">
+        <form className="space-y-10" onSubmit={handleSubmit}>
           <div className={activeStep === 0 ? "space-y-10" : "hidden"}>
               <FormSection icon={faClipboardCheck} title={t.sections.assessmentDetails}>
                 <div className="grid gap-5 pt-2 md:grid-cols-2">
                   <Field label={t.labels.school}>
-                    <TextInput />
+                    <TextInput name="school" />
                   </Field>
                   <Field label={t.labels.address}>
-                    <TextInput />
+                    <TextInput name="school_address" />
                   </Field>
                   <Field label={t.labels.assessmentTitle}>
-                    <TextInput />
+                    <TextInput name="assessment_title" />
                   </Field>
                   <div className="space-y-2">
                     <span className="block text-sm font-semibold text-on-surface-variant">
@@ -589,19 +630,19 @@ export function ApplicationFormClient() {
             <FormSection icon={faUser} title={t.sections.profile}>
               <div className="grid gap-5 md:grid-cols-3">
                 <Field label={t.labels.surname}>
-                  <TextInput />
+                  <TextInput name="surname" />
                 </Field>
                 <Field label={t.labels.firstName}>
-                  <TextInput />
+                  <TextInput name="first_name" />
                 </Field>
                 <Field label={t.labels.middleName}>
-                  <TextInput />
+                  <TextInput name="middle_name" />
                 </Field>
                 <Field label={t.labels.middleInitial}>
-                  <TextInput />
+                  <TextInput name="middle_initial" />
                 </Field>
                 <Field label={t.labels.nameExtension}>
-                  <TextInput placeholder={t.placeholders.nameExtension} />
+                  <TextInput name="name_extension" placeholder={t.placeholders.nameExtension} />
                 </Field>
               </div>
 
@@ -609,13 +650,13 @@ export function ApplicationFormClient() {
                 <FieldGroup className="border-t-0 pt-0">
                   <Field label={t.labels.mailingAddress}>
                   <div className="grid gap-4 md:grid-cols-3">
-                    <TextInput placeholder={t.placeholders.street} />
-                    <TextInput placeholder={t.placeholders.barangay} />
-                    <TextInput placeholder={t.placeholders.district} />
-                    <TextInput placeholder={t.placeholders.city} />
-                    <TextInput placeholder={t.placeholders.province} />
-                    <TextInput placeholder={t.placeholders.region} />
-                    <TextInput placeholder={t.placeholders.zipCode} />
+                    <TextInput name="street" placeholder={t.placeholders.street} />
+                    <TextInput name="barangay" placeholder={t.placeholders.barangay} />
+                    <TextInput name="district" placeholder={t.placeholders.district} />
+                    <TextInput name="city" placeholder={t.placeholders.city} />
+                    <TextInput name="province" placeholder={t.placeholders.province} />
+                    <TextInput name="region" placeholder={t.placeholders.region} />
+                    <TextInput name="zip_code" placeholder={t.placeholders.zipCode} />
                   </div>
                   </Field>
                 </FieldGroup>
@@ -623,10 +664,10 @@ export function ApplicationFormClient() {
                 <FieldGroup>
                   <div className="grid gap-5 md:grid-cols-2">
                     <Field label={t.labels.motherName}>
-                      <TextInput />
+                      <TextInput name="mother_name" />
                     </Field>
                     <Field label={t.labels.fatherName}>
-                      <TextInput />
+                      <TextInput name="father_name" />
                     </Field>
                   </div>
                 </FieldGroup>
@@ -657,16 +698,16 @@ export function ApplicationFormClient() {
                 <FieldGroup>
                   <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                     <Field label={t.labels.telephone}>
-                      <TextInput type="tel" />
+                      <TextInput name="telephone" type="tel" />
                     </Field>
                     <Field label={t.labels.mobile}>
-                      <TextInput type="tel" />
+                      <TextInput name="mobile" type="tel" />
                     </Field>
                     <Field label={t.labels.email}>
-                      <TextInput type="email" />
+                      <TextInput name="email" type="email" />
                     </Field>
                     <Field label={t.labels.fax}>
-                      <TextInput />
+                      <TextInput name="fax" />
                     </Field>
                   </div>
                 </FieldGroup>
@@ -697,15 +738,15 @@ export function ApplicationFormClient() {
                 </FieldGroup>
 
                 <FieldGroup>
-                  <div className="grid gap-5 md:grid-cols-3">
+                  <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_8rem]">
                     <Field label={t.labels.birthDate}>
-                      <TextInput type="date" />
+                      <TextInput name="birth_date" type="date" />
                     </Field>
                     <Field label={t.labels.birthPlace}>
-                      <TextInput />
+                      <TextInput name="birth_place" />
                     </Field>
                     <Field label={t.labels.age}>
-                      <TextInput type="number" />
+                      <TextInput name="age" type="number" />
                     </Field>
                   </div>
                 </FieldGroup>
@@ -770,6 +811,25 @@ export function ApplicationFormClient() {
 
           </div>
 
+          <div className={activeStep === 5 ? "space-y-10" : "hidden"}>
+            <FormSection icon={faIdCard} title={t.sections.admissionSlip}>
+              <div className="grid gap-5 md:grid-cols-2">
+                <Field label={t.labels.applicantName}>
+                  <TextInput name="admission_applicant_name" />
+                </Field>
+                <Field label={t.labels.admissionTel}>
+                  <TextInput name="admission_tel" type="tel" />
+                </Field>
+                <Field label={t.labels.admissionAssessment}>
+                  <TextInput name="admission_assessment" />
+                </Field>
+                <Field label={t.labels.officialReceiptNumber}>
+                  <TextInput name="official_receipt_number" />
+                </Field>
+              </div>
+            </FormSection>
+          </div>
+
           <div className="flex flex-col gap-4 border-t border-slate-200 pt-8 md:flex-row md:items-center md:justify-between">
             <button
               className="order-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border-2 border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 md:order-1 md:w-auto"
@@ -790,11 +850,12 @@ export function ApplicationFormClient() {
               </button>
               {isLastStep ? (
                 <button
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-primary-container md:w-auto"
-                type="submit"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-primary-container md:w-auto"
+                  disabled={isGeneratingPdf}
+                  type="submit"
                 >
                   <FontAwesomeIcon aria-hidden="true" className="h-4 w-4" icon={faPrint} />
-                  {t.finish}
+                  {isGeneratingPdf ? "Generating..." : t.finish}
                 </button>
               ) : (
                 <button
